@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Casino</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen active">
+        <div class="login-box glow-box">
+            <h1 class="neon-text-magenta">NEON CASINO</h1>
+            <p>Enter your username to start playing</p>
+            <input type="text" id="username-input" placeholder="Username" autocomplete="off" />
+            <button id="login-btn" class="neon-btn-blue">ENTER CASINO</button>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="main-screen" class="screen">
+        <header class="top-bar glass-panel">
+            <div class="user-info">
+                <span class="avatar">👤</span>
+                <span id="display-username">Player</span>
+            </div>
+            <div class="wallet-info">
+                <div class="balance-pill">
+                    <span class="label">Balance:</span>
+                    <span id="display-money" class="value neon-text-green">$1000.00</span>
+                    <button id="add-money-btn" class="icon-btn" title="Buy/Sell Chips">+</button>
+                </div>
+                <div class="chip-pill">
+                    <span class="label">Chips:</span>
+                    <span id="display-chips" class="value neon-text-blue">0</span>
+                    <button id="manage-chips-btn" class="icon-btn" title="Buy/Sell Chips">⇄</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-container">
+            <!-- Sidebar: Game Selection -->
+            <aside class="sidebar glass-panel">
+                <h2 class="neon-text-blue">GAMES</h2>
+                <nav>
+                    <button class="nav-btn active" data-game="baccarat">Baccarat</button>
+                    <button class="nav-btn" data-game="pokdeng">Pok Deng</button>
+                    <button class="nav-btn" data-game="poker">Texas Hold'em</button>
+                    <button class="nav-btn" data-game="blackjack">Blackjack</button>
+                    <button class="nav-btn" data-game="carrot">🥕 Carrot Mine</button>
+                </nav>
+                <div class="history-panel">
+                    <h3>History (Last 5)</h3>
+                    <ul id="history-list" class="history-list">
+                        <!-- History items go here -->
+                        <li class="history-empty">No games played yet.</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Game Board Area -->
+            <main class="active-game-area">
+                <!-- Baccarat Board -->
+                <div id="baccarat-board" class="game-board active">
+                    <!-- Notifications -->
+                    <div id="game-message" class="game-message hidden">PLAYER WINS!</div>
+                    
+                    <!-- Dealer Area (Banker) -->
+                    <div class="hand-area banker-area glow-red">
+                        <div class="hand-label">BANKER <span id="banker-score" class="score">0</span></div>
+                        <div id="banker-cards" class="cards-container">
+                            <!-- Cards inserted by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Player Area -->
+                    <div class="hand-area player-area glow-blue">
+                        <div class="hand-label">PLAYER <span id="player-score" class="score">0</span></div>
+                        <div id="player-cards" class="cards-container">
+                            <!-- Cards inserted by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Betting Zones -->
+                    <div class="betting-zones">
+                        <div class="bet-zone" data-bet-type="player" id="zone-player">
+                            <span class="multiplier">1:1</span>
+                            PLAYER
+                            <div class="placed-bet" id="bet-amt-player"></div>
+                        </div>
+                        <div class="bet-zone" data-bet-type="tie" id="zone-tie">
+                            <span class="multiplier">8:1</span>
+                            TIE
+                            <div class="placed-bet" id="bet-amt-tie"></div>
+                        </div>
+                        <div class="bet-zone" data-bet-type="banker" id="zone-banker">
+                            <span class="multiplier">1:0.95</span>
+                            BANKER
+                            <div class="placed-bet" id="bet-amt-banker"></div>
+                        </div>
+                    </div>
+
+                    <!-- Controls & Betting -->
+                    <div class="game-controls glass-panel">
+                        <div class="bet-input-area">
+                            <input type="number" id="baccarat-bet-input" class="bet-input neon-text-blue" placeholder="Bet Amount (Chips)" min="1">
+                        </div>
+                        <div class="action-buttons">
+                            <button id="clear-bets-btn" class="neon-btn-red">CLEAR</button>
+                            <button id="deal-btn" class="neon-btn-green" disabled>DEAL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pok Deng Board -->
+                <div id="pokdeng-board" class="game-board">
+                    <div id="pokdeng-message" class="game-message hidden"></div>
+                    <!-- Dealer Area -->
+                    <div class="hand-area banker-area glow-red">
+                        <div class="hand-label">DEALER <span id="pokdeng-dealer-score" class="score">0</span></div>
+                        <div id="pokdeng-dealer-cards" class="cards-container"></div>
+                    </div>
+                    <!-- Player Area -->
+                    <div class="hand-area player-area glow-blue">
+                        <div class="hand-label">PLAYER <span id="pokdeng-player-score" class="score">0</span></div>
+                        <div id="pokdeng-player-cards" class="cards-container"></div>
+                        <div class="action-buttons hidden" id="pokdeng-ingame-controls" style="margin-top: 20px;">
+                            <button id="pokdeng-hit-btn" class="neon-btn-blue">DRAW (HIT)</button>
+                            <button id="pokdeng-stand-btn" class="neon-btn-red">STAND</button>
+                        </div>
+                    </div>
+                    <!-- Betting Zones -->
+                    <div class="betting-zones">
+                        <div class="bet-zone" data-bet-type="pokdeng" id="zone-pokdeng" style="width: 300px;">
+                            <span class="multiplier">Win up to 3x</span>
+                            PLACE BET
+                            <div class="placed-bet" id="bet-amt-pokdeng"></div>
+                        </div>
+                    </div>
+                    <!-- Controls -->
+                    <div class="game-controls glass-panel">
+                        <div class="bet-input-area" id="pokdeng-bet-area">
+                            <input type="number" id="pokdeng-bet-input" class="bet-input neon-text-blue" placeholder="Bet Amount (Chips)" min="1">
+                        </div>
+                        <div class="action-buttons" id="pokdeng-start-controls">
+                            <button id="pokdeng-clear-btn" class="neon-btn-red">CLEAR</button>
+                            <button id="pokdeng-deal-btn" class="neon-btn-green">DEAL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Texas Hold'em Board -->
+                <div id="poker-board" class="game-board">
+                    <div id="poker-message" class="game-message hidden"></div>
+                    
+                    <div class="hand-area banker-area glow-red" style="flex: 0.5">
+                        <div class="hand-label">AI OPPONENT <span id="poker-ai-action" style="color:#aaa; font-weight:normal; margin-left:10px;">Waiting...</span></div>
+                        <div id="poker-ai-cards" class="cards-container" style="min-height: 100px;"></div>
+                    </div>
+
+                    <div class="poker-community-area" style="text-align: center; margin: 20px 0;">
+                        <h3 class="neon-text-green" style="margin-bottom: 10px;">POT: <span id="poker-pot">0</span> 🪙</h3>
+                        <div id="poker-community-cards" class="cards-container"></div>
+                    </div>
+
+                    <div class="hand-area player-area glow-blue" style="flex: 0.5">
+                        <div class="hand-label">PLAYER <span id="poker-player-eval" class="score"></span></div>
+                        <div id="poker-player-cards" class="cards-container" style="min-height: 100px;"></div>
+                        <div id="poker-ingame-controls" class="action-buttons hidden" style="margin-top: 20px;">
+                            <button id="poker-fold-btn" class="neon-btn-red">FOLD</button>
+                            <button id="poker-call-btn" class="neon-btn-blue">CALL / CHECK</button>
+                            <button id="poker-raise-btn" class="neon-btn-green">RAISE (+<span id="poker-raise-amt">10</span>)</button>
+                        </div>
+                    </div>
+
+                    <!-- Betting Zones (Ante) -->
+                    <div id="poker-pregame-controls" class="betting-zones">
+                        <div class="bet-zone" data-bet-type="poker" id="zone-poker" style="width: 300px;">
+                            ANTE BET
+                            <div class="placed-bet" id="bet-amt-poker"></div>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="game-controls glass-panel">
+                        <div class="bet-input-area" id="poker-bet-area">
+                            <input type="number" id="poker-bet-input" class="bet-input neon-text-blue" placeholder="Ante Amount (Chips)" min="1">
+                        </div>
+                        <div id="poker-start-controls" class="action-buttons">
+                            <button id="poker-clear-btn" class="neon-btn-red">CLEAR</button>
+                            <button id="poker-deal-btn" class="neon-btn-green">DEAL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blackjack Board -->
+                <div id="blackjack-board" class="game-board">
+                    <div id="blackjack-message" class="game-message hidden"></div>
+                    
+                    <div class="hand-area banker-area glow-red">
+                        <div class="hand-label">DEALER <span id="blackjack-dealer-score" class="score">?</span></div>
+                        <div id="blackjack-dealer-cards" class="cards-container"></div>
+                    </div>
+
+                    <div class="hand-area player-area glow-blue">
+                        <div class="hand-label">PLAYER <span id="blackjack-player-score" class="score">0</span></div>
+                        <div id="blackjack-player-cards" class="cards-container"></div>
+                        <div id="blackjack-ingame-controls" class="action-buttons hidden" style="margin-top: 20px;">
+                            <button id="blackjack-hit-btn" class="neon-btn-blue">HIT</button>
+                            <button id="blackjack-stand-btn" class="neon-btn-red">STAND</button>
+                            <button id="blackjack-double-btn" class="neon-btn-green">DOUBLE DOWN</button>
+                        </div>
+                    </div>
+
+                    <div class="betting-zones">
+                        <div class="bet-zone" data-bet-type="blackjack" id="zone-blackjack" style="width: 300px;">
+                            <span class="multiplier">Blackjack pays 3:2</span>
+                            PLACE BET
+                            <div class="placed-bet" id="bet-amt-blackjack"></div>
+                        </div>
+                    </div>
+
+                    <div class="game-controls glass-panel">
+                        <div class="bet-input-area" id="blackjack-bet-area">
+                            <input type="number" id="blackjack-bet-input" class="bet-input neon-text-blue" placeholder="Bet Amount (Chips)" min="1">
+                        </div>
+                        <div id="blackjack-start-controls" class="action-buttons">
+                            <button id="blackjack-clear-btn" class="neon-btn-red">CLEAR</button>
+                            <button id="blackjack-deal-btn" class="neon-btn-green">DEAL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carrot Mine -->
+                <div id="carrot-board" class="game-board">
+                    <div class="carrot-mine-container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
+                        <h2 class="neon-text-green" style="margin-bottom: 20px; font-size: 2rem;">CARROT MINE</h2>
+                        <p style="color: #aaa; margin-bottom: 40px;">Out of money? Click the carrot to mine $1!</p>
+                        
+                        <div id="carrot-btn" style="font-size: 10rem; cursor: pointer; user-select: none; transition: transform 0.1s; position:relative;">
+                            🥕
+                        </div>
+                        <div style="margin-top: 30px; font-size: 1.5rem;">
+                            Mined: <span id="carrot-mined-total" class="neon-text-green">$0</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="bank-modal" class="modal hidden">
+        <div class="modal-content glow-box">
+            <h2>CASHIER</h2>
+            <div class="modal-body">
+                <div class="conversion">
+                    <p>Money to Chips (1:10)</p>
+                    <input type="number" id="buy-chips-input" min="1" placeholder="$ Amount">
+                    <button id="buy-chips-btn" class="neon-btn-blue">BUY CHIPS</button>
+                </div>
+                <hr>
+                <div class="conversion">
+                    <p>Chips to Money (10:1)</p>
+                    <input type="number" id="sell-chips-input" min="10" placeholder="Chip Amount">
+                    <button id="sell-chips-btn" class="neon-btn-green">CASH OUT</button>
+                </div>
+            </div>
+            <button id="close-bank-btn" class="close-btn" title="Close Cashier">&times;</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
