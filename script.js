@@ -141,6 +141,17 @@ const ui = {
     blackjackMessage: document.getElementById('blackjack-message'),
     blackjackIngameControls: document.getElementById('blackjack-ingame-controls'),
     blackjackStartControls: document.getElementById('blackjack-start-controls'),
+    // Slot Machine
+    slotBetInput: document.getElementById('slot-bet-input'),
+    slotClearBtn: document.getElementById('slot-clear-btn'),
+    slotSpinBtn: document.getElementById('slot-spin-btn'),
+    slotReels: [
+        document.getElementById('reel-1'),
+        document.getElementById('reel-2'),
+        document.getElementById('reel-3')
+    ],
+    slotMessage: document.getElementById('slot-message'),
+    slotStartControls: document.getElementById('slot-start-controls'),
     historyList: document.getElementById('history-list'),
     navBtns: document.querySelectorAll('.nav-btn'),
     gameBoards: document.querySelectorAll('.game-board'),
@@ -352,6 +363,7 @@ ui.clearBetsBtn.addEventListener('click', () => { clearBets(['player', 'banker',
 ui.pokdengClearBtn.addEventListener('click', () => { clearBets(['pokdeng']); });
 ui.pokerClearBtn.addEventListener('click', () => { clearBets(['poker']); });
 ui.blackjackClearBtn.addEventListener('click', () => { clearBets(['blackjack']); });
+ui.slotClearBtn.addEventListener('click', () => { ui.slotBetInput.value = ''; });
 
 function clearBets(types) {
     if (gameState !== 'IDLE') return;
@@ -1272,6 +1284,98 @@ function endBlackjackRound(outcome) {
         gameState = 'IDLE';
     }, 4000);
 }
+
+// ============================================
+// GAME ENGINE: SLOT MACHINE
+// ============================================
+
+const slotSymbols = ['🍒', '🍋', '🍇', '🔔', '💎', '7️⃣'];
+const slotMultipliers = { '🍒': 3, '🍋': 5, '🍇': 10, '🔔': 20, '💎': 50, '7️⃣': 100 };
+
+ui.slotSpinBtn.addEventListener('click', async () => {
+    if (gameState !== 'IDLE') return;
+
+    let betAmount = parseInt(ui.slotBetInput.value);
+    if (isNaN(betAmount) || betAmount <= 0) {
+        alert("Please enter a valid bet amount.");
+        return;
+    }
+
+    if (userProfile.chips < betAmount) {
+        alert("Not enough chips! Please buy more.");
+        return;
+    }
+
+    // Start spin
+    gameState = 'SPINNING';
+    playSound('chips');
+    userProfile.chips -= betAmount;
+    saveProfile();
+    updateBetsUI();
+
+    ui.slotSpinBtn.disabled = true;
+    ui.slotClearBtn.disabled = true;
+    ui.slotMessage.classList.add('hidden');
+
+    // Add animation classes
+    ui.slotReels.forEach(r => r.classList.add('spin-anim'));
+    
+    // Play a tick sound every 200ms
+    let tickInterval = setInterval(() => playSound('deal'), 200);
+
+    // Wait 2 seconds for dramatic effect
+    await sleep(2000);
+    clearInterval(tickInterval);
+
+    // Determine results
+    let results = [];
+    ui.slotReels.forEach(r => {
+        r.classList.remove('spin-anim');
+        // Weighted random is omitted here for pure chance
+        let randomSymbol = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+        results.push(randomSymbol);
+        r.textContent = randomSymbol;
+        playSound('deal');
+    });
+
+    await sleep(500);
+
+    // Evaluate win
+    let winAmount = 0;
+    let profit = -betAmount;
+    
+    // Check if 3 match
+    if (results[0] === results[1] && results[1] === results[2]) {
+        let sym = results[0];
+        let multiplier = slotMultipliers[sym];
+        winAmount = betAmount * multiplier;
+        profit = winAmount - betAmount;
+        
+        ui.slotMessage.textContent = `JACKPOT! ${multiplier}X (${winAmount} Chips)`;
+        ui.slotMessage.style.borderColor = 'var(--neon-green)';
+        ui.slotMessage.style.textShadow = '0 0 10px var(--neon-green)';
+        playSound('win');
+        
+        userProfile.chips += winAmount;
+        saveProfile();
+        updateBetsUI();
+    } else {
+        ui.slotMessage.textContent = 'YOU LOSE';
+        ui.slotMessage.style.borderColor = 'var(--neon-red)';
+        ui.slotMessage.style.textShadow = '0 0 10px var(--neon-red)';
+        playSound('lose');
+    }
+
+    ui.slotMessage.classList.remove('hidden');
+    addHistory(`Slot (${profit > 0 ? 'WIN' : 'LOSE'})`, profit);
+
+    setTimeout(() => {
+        ui.slotSpinBtn.disabled = false;
+        ui.slotClearBtn.disabled = false;
+        ui.slotMessage.classList.add('hidden');
+        gameState = 'IDLE';
+    }, 3000);
+});
 
 // Kickoff
 init();

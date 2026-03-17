@@ -49,6 +49,7 @@
                     <button class="nav-btn" data-game="pokdeng">Pok Deng</button>
                     <button class="nav-btn" data-game="poker">Texas Hold'em</button>
                     <button class="nav-btn" data-game="blackjack">Blackjack</button>
+                    <button class="nav-btn" data-game="slot">Slot Machine</button>
                     <button class="nav-btn" data-game="carrot">🥕 Carrot Mine</button>
                 </nav>
                 <div class="history-panel">
@@ -229,6 +230,39 @@
                         <div id="blackjack-start-controls" class="action-buttons">
                             <button id="blackjack-clear-btn" class="neon-btn-red">CLEAR</button>
                             <button id="blackjack-deal-btn" class="neon-btn-green">DEAL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slot Machine Board -->
+                <div id="slot-board" class="game-board">
+                    <h2 class="neon-text-pink">SLOT MACHINE</h2>
+                    
+                    <div id="slot-message" class="game-message hidden"></div>
+                    
+                    <div class="slot-container glass-panel glow-pink">
+                        <div class="paytable">
+                            <span>🍒=3x</span> | 
+                            <span>🍋=5x</span> | 
+                            <span>🍇=10x</span> | 
+                            <span>🔔=20x</span> | 
+                            <span>💎=50x</span> | 
+                            <span>7️⃣=100x</span>
+                        </div>
+                        <div class="macine-reels">
+                            <div class="reel" id="reel-1">🍒</div>
+                            <div class="reel" id="reel-2">🍒</div>
+                            <div class="reel" id="reel-3">🍒</div>
+                        </div>
+                    </div>
+
+                    <div class="game-controls glass-panel">
+                        <div class="bet-input-area" id="slot-bet-area">
+                            <input type="number" id="slot-bet-input" class="bet-input neon-text-pink" placeholder="Bet Amount (Chips)" min="1">
+                        </div>
+                        <div id="slot-start-controls" class="action-buttons">
+                            <button id="slot-clear-btn" class="neon-btn-red">CLEAR</button>
+                            <button id="slot-spin-btn" class="neon-btn-pink">SPIN</button>
                         </div>
                     </div>
                 </div>
